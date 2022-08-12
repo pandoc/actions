@@ -3,13 +3,13 @@ author: 'Albert Krewinkel'
 description: 'Installs pandoc from the official binaries.'
 inputs:
   version:
-    description: 'The version of pandow to be installed.'
+    description: 'The version of pandoc to be installed.'
     required: false
 
 runs:
   using: 'composite'
   steps:
-    - name: 'Choose which binary to use'
+    - name: 'Choose which installer to use'
       shell: bash
       run: |
         case $RUNNER_OS in
@@ -32,19 +32,18 @@ runs:
         REPO: jgm/pandoc
         DOWNLOAD_URL: 'https://github.com/jgm/pandoc/releases/download/'
       run: |
-        if [ -z "${{ inputs.version }}" ]; then
-          gh release download \
-              --repo "$REPO" \
-              --pattern '*'${{ env.INSTALLER_SUFFIX }}
-        else
-          gh release download ${{ inputs.version }} \
-              --repo "$REPO" \
-              --pattern '*'${{ env.INSTALLER_SUFFIX }}
-        fi
+        gh release download ${{ inputs.version }} \
+            --repo "$REPO" \
+            --pattern '*'${{ env.INSTALLER_SUFFIX }}
+        printf 'INSTALLER_VERSION=%s' \
+               "$(ls pandoc-*-${{ env.INSTALLER_SUFFIX }} | \
+                      sed 's/pandoc-\([0-9.]*\)-.*/\1/')" \
+               >> $GITHUB_ENV
+
     - name: 'Install pandoc'
       shell: bash
       env:
-        INSTALLER: pandoc-${{ inputs.version }}-${{ env.INSTALLER_SUFFIX }}
+        INSTALLER: pandoc-${{ env.INSTALLER_VERSION }}-${{ env.INSTALLER_SUFFIX }}
       run: |
         case $RUNNER_OS in
           "Linux")
