@@ -20,7 +20,7 @@ runs:
               printf 'INSTALLER_SUFFIX=macOS.pkg' >> $GITHUB_ENV
               ;;
             *)
-              printf 'Don't know how to install pandoc on %s\n' "$RUNNER_OS"
+              printf 'Do not know how to install pandoc on %s\n' "$RUNNER_OS"
               exit 1
               ;;
         esac
@@ -35,11 +35,11 @@ runs:
         if [ -z "${{ inputs.version }}" ]; then
           gh release download \
               --repo "$REPO" \
-              --pattern ${{ env.INSTALLER_SUFFIX }}
+              --pattern '*'${{ env.INSTALLER_SUFFIX }}
         else
           gh release download ${{ inputs.version }} \
               --repo "$REPO" \
-              --pattern ${{ env.INSTALLER_SUFFIX }}
+              --pattern '*'${{ env.INSTALLER_SUFFIX }}
         fi
     - name: 'Install pandoc'
       shell: bash

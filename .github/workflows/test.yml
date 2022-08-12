@@ -1,0 +1,25 @@
+name: 'Test'
+
+on:
+  push:
+    branch: ['test']
+
+permissions:
+  contents: read
+
+jobs:
+  pandoc:
+    name: 'Install pandoc'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install
+        uses: ./setup
+        with:
+          version: 2.19
+
+      - name: Run pandoc
+        run: |
+          pandoc --version
