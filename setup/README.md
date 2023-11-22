@@ -14,7 +14,7 @@ Omitting that parameter will install the latest released version.
 
 ```
       - name: Install
-        uses: pandoc/actions/setup
+        uses: pandoc/actions/setup@{main}
         with:
           version: 2.19
 
