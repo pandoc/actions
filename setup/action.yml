@@ -12,12 +12,20 @@ runs:
     - name: 'Choose which installer to use'
       shell: bash
       run: |
+        # Use the latest version by default
+        if [ -z "${{inputs.version }}" ]; then
+            printf 'PANDOC_VERSION=%s\n' \
+                $(gh release view --json tagName -t "{{.tagName}}") \
+                >> $GITHUB_ENV
+        else
+            printf 'PANDOC_VERSION=${{ inputs.version }}\n' >> $GITHUB_ENV
+        fi
         case $RUNNER_OS in
           "Linux")
-              printf 'INSTALLER_SUFFIX=1-amd64.deb' >> $GITHUB_ENV
+              printf 'INSTALLER_SUFFIX=1-amd64.deb\n' >> $GITHUB_ENV
               ;;
            "macOS")
-              printf 'INSTALLER_SUFFIX=macOS.pkg' >> $GITHUB_ENV
+              printf 'INSTALLER_SUFFIX=macOS.pkg\n' >> $GITHUB_ENV
               ;;
             *)
               printf 'Do not know how to install pandoc on %s\n' "$RUNNER_OS"
@@ -31,18 +39,14 @@ runs:
         GITHUB_TOKEN: ${{ github.token }}
         REPO: jgm/pandoc
       run: |
-        gh release download ${{ inputs.version }} \
+        gh release download ${{ env.PANDOC_VERSION }} \
             --repo "$REPO" \
             --pattern '*'${{ env.INSTALLER_SUFFIX }}
-        printf 'INSTALLER_VERSION=%s' \
-               "$(ls pandoc-*-${{ env.INSTALLER_SUFFIX }} | \
-                      sed 's/pandoc-\([0-9.]*\)-.*/\1/')" \
-               >> $GITHUB_ENV
 
     - name: 'Install pandoc'
       shell: bash
       env:
-        INSTALLER: pandoc-${{ env.INSTALLER_VERSION }}-${{ env.INSTALLER_SUFFIX }}
+        INSTALLER: pandoc-${{ env.PANDOC_VERSION }}-${{ env.INSTALLER_SUFFIX }}
       run: |
         case $RUNNER_OS in
           "Linux")
