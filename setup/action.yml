@@ -30,7 +30,6 @@ runs:
       env:
         GITHUB_TOKEN: ${{ github.token }}
         REPO: jgm/pandoc
-        DOWNLOAD_URL: 'https://github.com/jgm/pandoc/releases/download/'
       run: |
         gh release download ${{ inputs.version }} \
             --repo "$REPO" \
