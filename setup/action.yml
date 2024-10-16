@@ -29,7 +29,7 @@ runs:
               printf 'INSTALLER_SUFFIX=1-amd64.deb\n' >> $GITHUB_ENV
               ;;
            "macOS")
-              printf 'INSTALLER_SUFFIX=macOS.pkg\n' >> $GITHUB_ENV
+              printf 'INSTALLER_SUFFIX=x86_64-macOS.pkg\n' >> $GITHUB_ENV
               ;;
             *)
               printf 'Do not know how to install pandoc on %s\n' "$RUNNER_OS"
