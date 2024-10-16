@@ -11,11 +11,15 @@ runs:
   steps:
     - name: 'Choose which installer to use'
       shell: bash
+      env:
+        GITHUB_TOKEN: ${{ github.token }}
+        REPO: jgm/pandoc
       run: |
         # Use the latest version by default
         if [ -z "${{inputs.version }}" ]; then
             printf 'PANDOC_VERSION=%s\n' \
-                $(gh release view --json tagName -t "{{.tagName}}") \
+                $(gh release view --json tagName -t "{{.tagName}}" \
+                      --repo "$REPO") \
                 >> $GITHUB_ENV
         else
             printf 'PANDOC_VERSION=${{ inputs.version }}\n' >> $GITHUB_ENV
