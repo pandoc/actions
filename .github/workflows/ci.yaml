@@ -33,3 +33,25 @@ jobs:
             [ "pandoc ${{ matrix.version }}" = "$(pandoc -v | head -n1)" ]
         fi
 
+  macos:
+    runs-on: macos-15
+    strategy:
+      fail-fast: false
+      matrix:
+        version:
+          - '2.19.2'
+          -
+    steps:
+    - name: Install pandoc
+      uses: pandoc/actions/setup@main
+      with:
+        version: ${{ matrix.version }}
+    - name: Verify
+      run: |
+        if [ -z "${{ matrix.version }}" ]; then
+            # just check that pandoc is available
+            pandoc -v
+        else
+            # check that we got the right version
+            [ "pandoc ${{ matrix.version }}" = "$(pandoc -v | head -n1)" ]
+        fi
