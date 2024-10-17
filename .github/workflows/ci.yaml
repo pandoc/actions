@@ -77,6 +77,5 @@ jobs:
             pandoc -v
         else
             # check that we got the right version
-            [ "pandoc ${{ matrix.version }}" = "$(pandoc -v | head -n1)" ] ||\
-                ( pandoc -v && false )
+            [ "pandoc.exe ${{ matrix.version }}" = "$(pandoc -v | head -n1)" ]
         fi
