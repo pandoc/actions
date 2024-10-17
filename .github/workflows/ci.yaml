@@ -9,7 +9,7 @@ on:
       - 'README.md'
 
 jobs:
-  linux:
+  Linux:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -33,7 +33,7 @@ jobs:
             [ "pandoc ${{ matrix.version }}" = "$(pandoc -v | head -n1)" ]
         fi
 
-  macos:
+  macOS:
     runs-on: macos-15
     strategy:
       fail-fast: false
@@ -47,6 +47,30 @@ jobs:
       with:
         version: ${{ matrix.version }}
     - name: Verify
+      run: |
+        if [ -z "${{ matrix.version }}" ]; then
+            # just check that pandoc is available
+            pandoc -v
+        else
+            # check that we got the right version
+            [ "pandoc ${{ matrix.version }}" = "$(pandoc -v | head -n1)" ]
+        fi
+
+  Windows:
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        version:
+          - '3.1.13'
+          -
+    steps:
+    - name: Install pandoc
+      uses: pandoc/actions/setup@main
+      with:
+        version: ${{ matrix.version }}
+    - name: Verify
+      shell: bash
       run: |
         if [ -z "${{ matrix.version }}" ]; then
             # just check that pandoc is available

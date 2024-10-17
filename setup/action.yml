@@ -38,6 +38,9 @@ runs:
                     printf 'INSTALLER_SUFFIX=x86_64-macOS.pkg\n' >> $GITHUB_ENV
                 fi
                 ;;
+            ("Windows")
+                printf 'INSTALLER_SUFFIX=windows-x86_64.zip\n' >> $GITHUB_ENV
+                ;;
             (*)
                 printf 'Do not know how to install pandoc on %s\n' "$RUNNER_OS"
                 exit 1
@@ -60,15 +63,22 @@ runs:
         INSTALLER: pandoc-${{ env.PANDOC_VERSION }}-${{ env.INSTALLER_SUFFIX }}
       run: |
         case $RUNNER_OS in
-          "Linux")
-              sudo apt install ./$INSTALLER
-              ;;
-           "macOS")
-              sudo installer -pkg ./$INSTALLER -target '/'
-              ;;
-            *)
-              echo "$RUNNER_OS not supported"
-              exit 1
-              ;;
+            ("Linux")
+                sudo apt install ./$INSTALLER
+                ;;
+            ("macOS")
+                sudo installer -pkg ./$INSTALLER -target '/'
+                ;;
+            ("Windows")
+                unzip "$INSTALLER"
+                mv pandoc-${{ env.PANDOC_VERSION }}/pandoc /usr/bin/pandoc
+                rm -rf pandoc-${{ env.PANDOC_VERSION }}
+                ;;
+            (*)
+                echo "$RUNNER_OS not supported"
+                exit 1
+                ;;
         esac
+
+        # Cleanup
         rm $INSTALLER
