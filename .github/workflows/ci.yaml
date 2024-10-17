@@ -62,7 +62,7 @@ jobs:
       fail-fast: false
       matrix:
         version:
-          - '3.1.13'
+          - '3.5'
           -
     steps:
     - name: Install pandoc
@@ -77,5 +77,6 @@ jobs:
             pandoc -v
         else
             # check that we got the right version
-            [ "pandoc ${{ matrix.version }}" = "$(pandoc -v | head -n1)" ]
+            [ "pandoc ${{ matrix.version }}" = "$(pandoc -v | head -n1)" ] ||\
+                ( pandoc -v && false )
         fi
