@@ -16,25 +16,32 @@ runs:
         REPO: jgm/pandoc
       run: |
         # Use the latest version by default
-        if [ -z "${{inputs.version }}" ]; then
-            printf 'PANDOC_VERSION=%s\n' \
-                $(gh release view --json tagName -t "{{.tagName}}" \
-                      --repo "$REPO") \
-                >> $GITHUB_ENV
+        if [ -z "${{ inputs.version }}" ]; then
+            PANDOC_VERSION="$(\
+                gh release view \
+                    --json tagName \
+                    -t '{{.tagName}}' \
+                    --repo "$REPO")"
         else
-            printf 'PANDOC_VERSION=${{ inputs.version }}\n' >> $GITHUB_ENV
+            PANDOC_VERSION='${{ inputs.version }}'
         fi
+        printf 'PANDOC_VERSION=%s\n' "$PANDOC_VERSION" >> $GITHUB_ENV
         case $RUNNER_OS in
-          "Linux")
-              printf 'INSTALLER_SUFFIX=1-amd64.deb\n' >> $GITHUB_ENV
-              ;;
-           "macOS")
-              printf 'INSTALLER_SUFFIX=x86_64-macOS.pkg\n' >> $GITHUB_ENV
-              ;;
-            *)
-              printf 'Do not know how to install pandoc on %s\n' "$RUNNER_OS"
-              exit 1
-              ;;
+            ("Linux")
+                printf 'INSTALLER_SUFFIX=1-amd64.deb\n' >> $GITHUB_ENV
+                ;;
+            ("macOS")
+                printf '%s' "$PANDOC_VERSION" | \
+                if grep -q "^2\."; then \
+                    printf 'INSTALLER_SUFFIX=macOS.pkg\n' >> $GITHUB_ENV
+                else
+                    printf 'INSTALLER_SUFFIX=x86_64-macOS.pkg\n' >> $GITHUB_ENV
+                fi
+                ;;
+            (*)
+                printf 'Do not know how to install pandoc on %s\n' "$RUNNER_OS"
+                exit 1
+                ;;
         esac
 
     - name: 'Download installer'
