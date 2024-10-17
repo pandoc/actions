@@ -17,7 +17,7 @@ jobs:
   pandoc:
     steps:
       - name: Install pandoc
-        uses: pandoc/actions/setup@v2
+        uses: pandoc/actions/setup@v1
 
       - name: Run pandoc
         run: pandoc --version
