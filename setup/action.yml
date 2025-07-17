@@ -64,7 +64,7 @@ runs:
       run: |
         case $RUNNER_OS in
             ("Linux")
-                sudo apt install ./$INSTALLER
+                sudo apt-get install ./$INSTALLER
                 ;;
             ("macOS")
                 sudo installer -pkg ./$INSTALLER -target '/'
