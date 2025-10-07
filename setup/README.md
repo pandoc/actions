@@ -2,7 +2,6 @@ Setup pandoc
 ============
 
 GitHub Action that will install the specified pandoc version.
-Windows-runners are currently not supported.
 
 ## Parameters
 
